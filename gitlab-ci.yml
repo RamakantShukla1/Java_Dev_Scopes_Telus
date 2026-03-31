@@ -1,0 +1,47 @@
+# Use Maven + Java image
+image: maven:3.9.6-eclipse-temurin-17
+
+stages:
+  - build
+  - test
+  - package
+
+# -----------------------------------
+# Global Variables
+# -----------------------------------
+variables:
+  # Inject BUILD_VERSION from pipeline
+  BUILD_VERSION: "$CI_PIPELINE_ID"
+  MAVEN_CLI_OPTS: "-B -DskipTests=false"
+
+# -----------------------------------
+# Build Stage
+# -----------------------------------
+build:
+  stage: build
+  script:
+    - echo "Building project..."
+    - mvn clean compile $MAVEN_CLI_OPTS
+
+# -----------------------------------
+# Unit Test Stage
+# -----------------------------------
+unit_test:
+  stage: test
+  script:
+    - echo "Running unit tests..."
+    - mvn test
+
+# -----------------------------------
+# Package Stage
+# -----------------------------------
+package:
+  stage: package
+  script:
+    - echo "Packaging JAR with BUILD_VERSION=$BUILD_VERSION"
+    - mvn clean package -DskipTests -DBUILD_VERSION=$BUILD_VERSION
+  artifacts:
+    name: "springboot-app-$CI_PIPELINE_ID"
+    paths:
+      - target/*.jar
+    expire_in: 1 weekc

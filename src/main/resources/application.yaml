@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: health-service
+
+app:
+  description: Health Details API
